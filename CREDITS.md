@@ -18,7 +18,7 @@
 
 ## 隨附的第三方內容
 
-`mods/opencc-traditional-lyrics/vendor/opencc-cn2t-1.4.2.mjs` 原樣取自 npm `opencc-js@1.4.2` 的 `dist/esm/cn2t.js`，僅更改檔名與副檔名。
+`mods/traditional-lyrics/vendor/opencc-cn2t-1.4.2.mjs` 原樣取自 npm `opencc-js@1.4.2` 的 `dist/esm/cn2t.js`，僅更改檔名與副檔名。
 
 該版本的原始授權檔完整保留於：
 
