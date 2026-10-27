@@ -1,6 +1,6 @@
 # OpenCC 繁體字幕：開發原始碼
 
-安裝使用請選 `opencc-traditional-lyrics-1.0.0.zip`；這份是可合併進 Folia 原始碼樹的開發套件。
+安裝使用請選 `traditional-lyrics-1.0.0.zip`；這份是可合併進 Folia 原始碼樹的開發套件。
 
 1. 取得 https://github.com/chthollyphile/folia-major ，切到 `v0.7.22`（`1f6d0f468f5bc81b23a8b40ad7ca96ccd4b1ecbe`）。
 2. 將此壓縮包的 `mods/`、`test/`、`dev/` 目錄合併到該儲存庫的同名目錄。沒有變更宿主既有程式碼。
