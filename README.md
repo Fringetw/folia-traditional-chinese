@@ -10,14 +10,14 @@
 
 目前驗證版本：**Folia 桌面版 0.7.22**。插件清單允許 `>=0.7.22 <0.8.0`，其他版本未實測。
 
-1. 在本儲存庫的 **Releases** 下載 `opencc-traditional-lyrics-1.0.0.zip`。
+1. 在本儲存庫的 **Releases** 下載 `traditional-lyrics-1.0.0.zip`。
 2. 開啟 Folia 的「設定 → 模組」，啟用「模組系統」。
 3. 將安裝 ZIP 拖到模組面板，不必解壓縮。
 4. 啟用「OpenCC 繁體字幕」並完成 Folia 的確認。
 
-本插件尚未經 Folium 官方簽署，因此會顯示「未驗證／未验证」。
+本插件尚未經 Folium 官方簽署，因此會顯示「未驗證」。
 
-Releases 的安裝 ZIP 與 GitHub 自動產生的 Source code 壓縮包用途不同。手動安裝時，也可以把本儲存庫的 `mods/opencc-traditional-lyrics/` 資料夾放入 Folia 的使用者模組目錄，再重新載入並啟用。
+Releases 的安裝 ZIP 與 GitHub 自動產生的 Source code 壓縮包用途不同。手動安裝時，也可以把本儲存庫的 `mods/traditional-lyrics/` 資料夾放入 Folia 的使用者模組目錄，再重新載入並啟用。
 
 ## 功能
 
