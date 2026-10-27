@@ -17,7 +17,7 @@
 
 本插件尚未經 Folium 官方簽署，因此會顯示「未驗證」。
 
-Releases 的安裝 ZIP 與 GitHub 自動產生的 Source code 壓縮包用途不同。手動安裝時，也可以把本儲存庫的 `mods/traditional-lyrics/` 資料夾放入 Folia 的使用者模組目錄，再重新載入並啟用。
+Releases 的安裝 ZIP 與 GitHub 自動產生的 Source code 壓縮包用途不同。手動安裝時，也可以把本儲存庫的 `mods/opencc-traditional-lyrics/` 資料夾放入 Folia 的使用者模組目錄，再重新載入並啟用。
 
 ## 功能
 
