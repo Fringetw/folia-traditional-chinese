@@ -9,7 +9,7 @@
 
 | 專案 | 用途 | 使用版本／基準 | 上游授權 |
 | --- | --- | --- | --- |
-| [chthollyphile/folia-major](https://github.com/chthollyphile/folia-major) | 宿主播放器、公開 Folium API、測試時使用的宿主資料驗證與 ZIP 安裝流程 | 正式版 v0.7.22，另驗證開發提交 99f8468785cce03d4760d5cc80aa4eec6ec5c965 | [AGPL-3.0](https://github.com/chthollyphile/folia-major/blob/v0.7.22/LICENSE) |
+| [chthollyphile/folia-major](https://github.com/chthollyphile/folia-major) | 宿主播放器、公開 Folium API、測試時使用的宿主資料驗證與 ZIP 安裝流程 | 自動測試 v0.7.22、v0.7.23；首版另驗證開發提交 99f8468785cce03d4760d5cc80aa4eec6ec5c965 | [AGPL-3.0](https://github.com/chthollyphile/folia-major/blob/v0.7.22/LICENSE) |
 | [BYVoid/OpenCC](https://github.com/BYVoid/OpenCC) | 開放中文轉換的上游專案與字典體系 | 透過 opencc-js／opencc-data 使用；沒有另外內附 OpenCC C++ 執行檔 | [Apache-2.0](https://github.com/BYVoid/OpenCC/blob/master/LICENSE) |
 | [nk2028/opencc-js](https://github.com/nk2028/opencc-js) | 瀏覽器可執行的 JavaScript 轉換引擎 | npm opencc-js@1.4.2 | 引擎 MIT；所含字典另採 Apache-2.0 |
 | [nk2028/opencc-data](https://github.com/nk2028/opencc-data) | opencc-js 建置時產生內附字典的來源 | 1.4.2，隨上述 opencc-js 發布檔內附 | [Apache-2.0](https://github.com/nk2028/opencc-data/blob/main/LICENSE) |

@@ -5,12 +5,13 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { zipSync } from 'fflate';
+import { unzipSync } from 'fflate';
 import activate from '../../../mods/opencc-traditional-lyrics/client.mjs';
 import { getConverter, transformLines } from '../../../mods/opencc-traditional-lyrics/converter.mjs';
 import { Locale } from '../../../mods/opencc-traditional-lyrics/vendor/opencc-cn2t-1.4.2.mjs';
-import { fromFoliumLines, toFoliumLines } from '../../../src/mods/folium/dto';
-import { applyLyricsTransform, installLyricsTransformHook, rerunLyricsTransform } from '../../../src/services/hostExtensionHooks';
+import { fromFoliumLines, toFoliumLines } from '@folia/mods/folium/dto';
+import { applyLyricsTransform, installLyricsTransformHook, rerunLyricsTransform } from '@folia/services/hostExtensionHooks';
+import { hostDirectory } from '../../../scripts/paths.mjs';
 
 // Real OpenCC dictionaries plus Folia's actual frozen DTO and lyric rebuild pipeline.
 const word = (text: string, startTime = 1, endTime = 2) => ({ text, startTime, endTime });
@@ -248,22 +249,25 @@ describe('Folium lifecycle with the real host rebuild and DTO validation', () =>
         }
     });
     it('installs and replaces the complete offline ZIP through Folia\'s real installer', async () => {
-        const require = createRequire(import.meta.url);
-        const { createZipInstall } = require('../../../electron/modSystem/zipInstall.cjs');
-        const folder = fileURLToPath(new URL('../../../mods/opencc-traditional-lyrics/', import.meta.url));
+        const require = createRequire(path.join(hostDirectory(), 'package.json'));
+        const { createZipInstall } = require('./electron/modSystem/zipInstall.cjs');
+        const projectRoot = fileURLToPath(new URL('../../../', import.meta.url));
         const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'folia-opencc-test-'));
         try {
-            const files: Record<string, Uint8Array> = {};
-            const collect = (dir: string, relative = '') => {
-                for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-                    const name = relative + entry.name;
-                    if (entry.isDirectory()) collect(path.join(dir, entry.name), name + '/');
-                    else files['opencc-traditional-lyrics/' + name] = fs.readFileSync(path.join(dir, entry.name));
-                }
-            };
-            collect(folder);
-            const zip = path.join(temp, 'plugin.zip');
-            fs.writeFileSync(zip, zipSync(files));
+            const build = spawnSync(process.execPath, [path.join(projectRoot, 'scripts/build.mjs')], { encoding: 'utf8' });
+            expect(build.stderr).toBe('');
+            expect(build.status).toBe(0);
+            const manifest = JSON.parse(fs.readFileSync(path.join(projectRoot, 'mods/opencc-traditional-lyrics/mod.json'), 'utf8'));
+            const zip = path.join(projectRoot, `dist/${manifest.id}-${manifest.version}.zip`);
+            const contents = unzipSync(fs.readFileSync(zip));
+            const prefix = manifest.id + '/';
+            expect(JSON.parse(Buffer.from(contents[prefix + 'mod.json']).toString()).version).toBe(manifest.version);
+            expect(contents[prefix + 'preview.png'].length).toBeLessThanOrEqual(1048576);
+            expect(contents[prefix + 'vendor/LICENSE.opencc-js']).toBeDefined();
+            expect(contents[prefix + 'vendor/LICENSE.OpenCC']).toBeDefined();
+            expect(contents[prefix + 'vendor/THIRD_PARTY_LICENSES.md']).toBeDefined();
+            expect(contents[prefix + 'VALIDATION.md']).toBeUndefined();
+            expect(contents[prefix + 'folium.sig.json']).toBeUndefined();
             const installer = createZipInstall({
                 app: { getPath: () => temp }, isModSystemEnabled: () => true,
                 loadAll: () => [], emitLog: () => {}, serializeError: (error: Error) => error.message,

@@ -1,64 +1,67 @@
 # Folia OpenCC 繁體字幕
 
-將 Folia 的簡體歌詞與中文譯文轉成繁體，保留原本的逐字時間軸。
+將 Folia 的簡體歌詞與中文譯文轉成繁體，保留原本的逐字時間軸。預設採用臺灣字形，內附 OpenCC 字典，可完全離線使用。
 
-預設採用臺灣字形。字典已附在插件內，可以離線使用，不需要 API 金鑰或另外安裝 OpenCC。
+目前市場正式版為 **1.0.0，已簽章收錄**；本分支準備的 **1.0.1** 是文件與發布流程維護版，尚待更新審查。
 
-這是適用於 [Folia](https://github.com/chthollyphile/folia-major) 的第三方 Folium 插件，使用 [opencc-js](https://github.com/nk2028/opencc-js) 執行 [OpenCC](https://github.com/BYVoid/OpenCC) 簡繁轉換。
+## 安裝（建議使用模組市場）
 
-## 安裝
+1. 開啟 Folia 桌面版的「設定 → 模組」，啟用「模組系統」。
+2. 前往 [Folium 模組市場：OpenCC 繁體字幕](https://folium-compound.cielaniska.top/#mod-opencc-traditional-lyrics)，依頁面指示安裝。
+3. 回到 Folia 模組面板，啟用「OpenCC 繁體字幕」。
 
-目前驗證版本：**Folia 桌面版 0.7.22**。插件清單允許 `>=0.7.22 <0.8.0`，其他版本未實測。
+市場的 1.0.0 已通過維護者的安全與功能審查，詳見 [收錄紀錄](https://github.com/chthollyphile/folium-compound/issues/98#issuecomment-6475429658)。
 
-1. 在本儲存庫的 **Releases** 下載 `traditional-lyrics-1.0.0.zip`。
-2. 開啟 Folia 的「設定 → 模組」，啟用「模組系統」。
-3. 將安裝 ZIP 拖到模組面板，不必解壓縮。
-4. 啟用「OpenCC 繁體字幕」並完成 Folia 的確認。
+### GitHub 手動安裝
 
-本插件已經 Folium 官方簽署 [Folium 模組市場](https://folium-compound.cielaniska.top/#mod-opencc-traditional-lyrics)。
+在 [Releases](https://github.com/Fringetw/folia-traditional-chinese/releases) 下載該版本的專用安裝 ZIP，拖入 Folia 模組面板即可。1.0.1 起統一使用檔名 `opencc-traditional-lyrics-<版本>.zip`；舊版 1.0.0 的附件名稱為 `traditional-lyrics-1.0.0.zip`。
 
-Releases 的安裝 ZIP 與 GitHub 自動產生的 Source code 壓縮包用途不同。手動安裝時，也可以把本儲存庫的 `mods/opencc-traditional-lyrics/` 資料夾放入 Folia 的使用者模組目錄，再重新載入並啟用。
+**本儲存庫自行打包的 ZIP 未包含 Folium 官方簽章，可能顯示「未驗證」。** 市場版的簽章只涵蓋送審時的指定檔案，不能沿用到修改後的版本。
 
-## 功能
+GitHub 自動產生的 Source code 壓縮包用於開發。若要從原始碼手動安裝，可將 `mods/opencc-traditional-lyrics/` 整個資料夾放進 Folia 的使用者模組目錄，再重新載入並啟用。
 
-- 轉換原文歌詞、和聲與中文譯文，可分別開關。
+## 功能與設定
+
+- 原文歌詞、和聲與中文譯文可以分別開關。
 - 可選臺灣繁體或 OpenCC 標準繁體。
-- 整句轉換後再對回逐字時間軸，保留詞語上下文。
-- 設定變更會立即套用；停用時還原原始顯示資料。
+- 先整句轉換，再對回逐字、音節與分詞邊界，保留詞語上下文與時間戳。
+- 設定變更立即套用；停用時還原原始顯示資料。
 - 命令面板提供「切換繁體字幕」。
 
-只影響顯示資料，不覆寫原始歌詞檔。
+只影響歌詞顯示資料，不覆寫原始歌詞檔。使用者不需要安裝 Python、OpenCC 或提供 API 金鑰。
 
-日文歌若只需要轉換中文字幕，可關閉「轉換原文歌詞與和聲」，保留「轉換中文譯文」。
+日文歌若只希望轉換中文字幕，請關閉「轉換原文歌詞與和聲」，保留「轉換中文譯文」。
 
-## 驗證與限制
+## 相容性與限制
 
-初版在 Folia `v0.7.22` 和開發分支通過 **41 項自動測試**，包括逐字同步、資料重建、啟停還原、安裝與覆蓋安裝。
+支援的版本範圍為 `>=0.7.22 <0.8.0`。目前對 **Folia v0.7.22 與 v0.7.23** 各執行 41 項自動測試，其他版本未驗證。這些測試不等於完整 Electron 介面的實際播放驗證。
 
-尚未完成完整 Electron 介面的實際播放驗證。
+- 預設保留含假名或韓文的整行文字；純漢字日文無法可靠自動辨識。
+- 只做中文簡繁轉換，不做跨語言翻譯。
+- 不套用會改變字數的臺灣地區詞彙替換；例如「软件」轉為「軟件」，不會改寫成「軟體」。
+- 與其他會改寫歌詞的模組並用時，結果可能受處理順序影響。
 
-預設保留含假名或韓文的整行文字；純漢字日文無法自動辨識。本插件不做跨語言翻譯，也不套用會改變字數的臺灣詞彙替換。
+檢查範圍見 [1.0.1 驗證紀錄](docs/validation-1.0.1.md) 與 [首版歷史紀錄](docs/validation-1.0.0.md)。
 
-完整檢查範圍見 [VALIDATION.md](mods/opencc-traditional-lyrics/VALIDATION.md)，測試方式見 [DEVELOPMENT.md](DEVELOPMENT.md)。
+## 開發與發布
+
+本次維護沒有新增轉換功能。新增的 GitHub Actions 會在 Folia v0.7.22、v0.7.23 上檢查與測試，通過後產生安裝 ZIP 和 SHA-256 校驗檔；不會自動發布 GitHub Release 或替模組簽章。
+
+本機測試與打包方式見 [DEVELOPMENT.md](DEVELOPMENT.md)，更新步驟見 [1.0.1 更新說明](docs/update-guide-1.0.1.md)，版本差異見 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 上游專案與致謝
 
-| 專案 | 在本插件中的用途 |
+| 專案 | 用途 |
 | --- | --- |
-| [chthollyphile/folia-major](https://github.com/chthollyphile/folia-major) | 提供 Folia 播放器、Folium 模組介面與歌詞轉換鉤子 |
-| [BYVoid/OpenCC](https://github.com/BYVoid/OpenCC) | 中文簡繁轉換的原始專案與字典體系 |
+| [chthollyphile/folia-major](https://github.com/chthollyphile/folia-major) | Folia 播放器、Folium 模組介面與歌詞轉換鉤子 |
+| [BYVoid/OpenCC](https://github.com/BYVoid/OpenCC) | 中文簡繁轉換的上游專案與字典體系 |
 | [nk2028/opencc-js](https://github.com/nk2028/opencc-js) | 實際使用的 JavaScript 轉換引擎，固定版本 1.4.2 |
-| [nk2028/opencc-data](https://github.com/nk2028/opencc-data) | opencc-js 內附字典的資料來源，版本 1.4.2 |
+| [nk2028/opencc-data](https://github.com/nk2028/opencc-data) | opencc-js 內附字典的來源，版本 1.4.2 |
 
-感謝上述專案的作者與貢獻者。這份清單表示本插件使用或依賴的來源，不表示本插件的維護者曾向這些上游專案提交程式碼。
+感謝上述專案的作者與貢獻者。這份清單表示使用的來源，不表示本專案維護者曾向這些上游專案提交程式碼。完整來源與授權見 [CREDITS.md](CREDITS.md)。
 
-完整來源、版本與授權標示見 [CREDITS.md](CREDITS.md)。
+## 維護與授權
 
-## 維護與開發
+維護與發布：[Fringetw](https://github.com/Fringetw)。初版程式碼、測試與文件使用 ChatGPT／Codex 協助製作。
 
-- 專案維護與發布：[Fringetw](https://github.com/Fringetw)。
-- 初版程式碼、測試與文件使用 ChatGPT／Codex 協助製作。
-
-## 授權
-
-本專案自行撰寫的插件程式碼與測試採用 [MIT License](LICENSE)。第三方引擎與字典保留各自的授權和著作權聲明，詳見 [CREDITS.md](CREDITS.md) 與插件的 `vendor/` 目錄。
+自行撰寫的插件程式碼、測試與建置腳本採用 [MIT License](LICENSE)；第三方引擎與字典保留各自授權，詳見插件的 `vendor/` 目錄。
