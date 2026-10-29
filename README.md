@@ -15,7 +15,7 @@
 3. 將安裝 ZIP 拖到模組面板，不必解壓縮。
 4. 啟用「OpenCC 繁體字幕」並完成 Folia 的確認。
 
-本插件尚未經 Folium 官方簽署，因此會顯示「未驗證」。
+本插件已經 Folium 官方簽署 [Folium 模組市場](https://folium-compound.cielaniska.top/#mod-opencc-traditional-lyrics)。
 
 Releases 的安裝 ZIP 與 GitHub 自動產生的 Source code 壓縮包用途不同。手動安裝時，也可以把本儲存庫的 `mods/opencc-traditional-lyrics/` 資料夾放入 Folia 的使用者模組目錄，再重新載入並啟用。
 
