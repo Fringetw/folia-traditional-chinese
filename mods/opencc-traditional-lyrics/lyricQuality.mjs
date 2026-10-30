@@ -5,10 +5,10 @@ const CHINESE_LANGUAGE = /^(?:zh|cmn|yue)(?:-|$)/i;
 const CREDIT = /^(?:作[詞词曲]|[編编]曲|[詞词曲]|翻[譯译]|[譯译]|[譯译]者|制作|製作|歌[詞词]|lyrics?|translated?\s+by|translation|composer|arranger|vocal)\s*[:：]/i;
 const BAD_TEXT = /\ufffd|[\u0000-\u0008\u000b\u000c\u000e-\u001f]|https?:\/\/|<\/?(?:html|script|body|div)\b|暂无翻译|暫無翻譯|翻译未提供|翻譯未提供|翻译加载失败|翻譯載入失敗/i;
 const VERSIONS = [
-    /\blive\b|現場|现场|演唱[會会]/i,
-    /\bremix\b|混音/i,
-    /\bacoustic\b|不插電|不插电/i,
-    /\b(?:instrumental|karaoke|off\s*vocal)\b|伴奏|純音樂|纯音乐/i,
+    /\blive\b|現場|现场|演唱[會会]|ライブ|ライヴ/i,
+    /\bremix\b|混音|リミックス/i,
+    /\bacoustic\b|不插電|不插电|アコースティック/i,
+    /\b(?:instrumental|karaoke|off\s*vocal)\b|伴奏|純音樂|纯音乐|カラオケ|インスト/i,
     /\b(?:cover|covered\s+by)\b|翻唱/i,
     /\b(?:sped\s*up|speed\s*up|nightcore)\b|加速/i,
     /\b(?:slowed|slow\s*version)\b|慢速/i,
@@ -30,7 +30,11 @@ export function songKey(song) {
 }
 
 function titleKey(title, canonicalize) {
-    return textKey(String(title ?? '').replace(/[（(\[【][^）)\]】]*[）)\]】]/g, ''), canonicalize);
+    // Only presentation labels are disposable. Part numbers, remaster years, languages and
+    // other version information inside brackets are part of a song's identity.
+    const presentation = /^(?:official(?:audio|video|musicvideo|lyrics?(?:video)?)|lyrics?(?:video)?|mv|hd|hq|4k|官方音源|官方音訊|官方影片)$/;
+    return textKey(String(title ?? '').replace(/[（(\[【]([^）)\]】]*)[）)\]】]/g,
+        (whole, inner) => presentation.test(textKey(inner, canonicalize)) ? '' : whole), canonicalize);
 }
 
 function similarity(left, right) {
@@ -57,7 +61,9 @@ export function matchSong(target, candidate, duration = 0, candidateDuration = 0
     const a = String(target?.title ?? '');
     const b = String(candidate.title ?? '');
     if (VERSIONS.some((version) => version.test(a) !== version.test(b))) return 0;
-    const title = similarity(titleKey(a, canonicalize), titleKey(b, canonicalize));
+    const leftTitle = titleKey(a, canonicalize);
+    const rightTitle = titleKey(b, canonicalize);
+    const title = similarity(leftTitle, rightTitle);
     if (title < 0.9) return 0;
     const artist = artistMatch(target.artist, candidate.artist, canonicalize);
     if (duration > 0 && candidateDuration > 0
@@ -68,7 +74,10 @@ export function matchSong(target, candidate, duration = 0, candidateDuration = 0
             || Math.abs(duration - candidateDuration) > 3) return 0;
         return 0.9;
     }
-    return 0.7 * title + 0.3 * artist;
+    if (leftTitle === rightTitle && artist === 1) return 1;
+    // A very long title differing by one word can otherwise exceed .98: that is still fuzzy,
+    // and must never qualify for whole-document fallback without original lines to cross-check.
+    return Math.min(0.97, 0.7 * title + 0.3 * artist);
 }
 
 function contentLine(line) {

@@ -110,6 +110,23 @@ describe('same song and version matching', () => {
         expect(matchSong(target({ artist: '' }), candidate(), 200, 201)).toBe(0.9);
         expect(matchSong(target({ artist: '' }), candidate(), 0, 0)).toBe(0);
     });
+    it('keeps meaningful bracketed part numbers in the title', () => {
+        expect(matchSong(target({ title: 'Song (Part 1)' }), candidate({ title: 'Song (Part 2)' }), 200, 200)).toBe(0);
+    });
+    it('ignores presentation labels without deleting version information', () => {
+        expect(matchSong(target({ title: 'Song' }), candidate({ title: 'Song (Official Audio)' }), 200, 200)).toBe(1);
+        expect(matchSong(target({ title: 'Song (2024 Remaster)' }), candidate({ title: 'Song (2025 Remaster)' }), 200, 200)).toBeLessThan(0.98);
+    });
+    it.each(['ライブ', 'リミックス', 'アコースティック', 'カラオケ'])('rejects another version labelled in Japanese: %s', (version) => {
+        expect(matchSong(target(), candidate({ title: target().title + ' (' + version + ')' }), 200, 200)).toBe(0);
+    });
+    it('never lets a fuzzy long title qualify as an exact whole-document replacement', () => {
+        const prefix = 'A very long name that shares almost every word with a different song version '.repeat(4);
+        const score = matchSong(target({ title: prefix + '(Part 1)' }), candidate({ title: prefix + '(Part 2)' }), 200, 200);
+        expect(score).toBeGreaterThanOrEqual(0.9);
+        expect(score).toBeLessThan(0.98);
+        expect(chooseLyrics([], [{ ...donor(lyrics(4)), match: score }], 200).changed).toBe(false);
+    });
 });
 
 describe('Chinese coverage and subtitle quality', () => {
@@ -397,6 +414,46 @@ describe('automatic lookup, fallback and lifecycle', () => {
     it('shows the chosen source and measurable Chinese coverage', async () => {
         const h = harness(); h.start(); await flush(); h.commands.get('subtitle-status').run();
         const text = h.api.ui.toast.mock.calls.at(-1)[0]; expect(text).toContain('網易雲'); expect(text).toContain('100%'); expect(text).toContain('不代表語意審核');
+    });
+    it.each([
+        ['not-signed-in', '需要登入'], ['session-expired', '登入已過期'], ['rate-limited', '請求上限'],
+        ['network', '連線失敗'], ['vip-required', '會員資格'], ['region-restricted', '地區'],
+    ])('explains a source failure: %s', async (code, expected) => {
+        const getLyrics = vi.fn().mockRejectedValue(Object.assign(new Error(code), { code }));
+        const h = harness({ omni: { getLyrics } }); h.start(); await flush();
+        h.commands.get('subtitle-status').run();
+        expect(h.api.ui.toast.mock.calls.at(-1)[0]).toContain(expected);
+        expect(h.shown().lines[0].translation).toBeUndefined();
+    });
+    it('explains why no configured source can be searched', async () => {
+        const h = harness({ providers: [] }); h.start(); await flush(); h.commands.get('subtitle-status').run();
+        expect(h.api.ui.toast.mock.calls.at(-1)[0]).toContain('沒有已設定且支援字幕搜尋的來源');
+    });
+    it('distinguishes no matching songs from an empty lyric result', async () => {
+        const h = harness({ omni: { searchSongs: vi.fn(async () => ({ items: [] })) } });
+        h.start(); await flush(); h.commands.get('subtitle-status').run();
+        expect(h.api.ui.toast.mock.calls.at(-1)[0]).toContain('沒有找到匹配的歌曲');
+        h.api.omni.searchSongs.mockResolvedValue({ items: [candidate()] });
+        h.api.omni.getLyrics.mockResolvedValue({ lines: [] });
+        h.commands.get('retry-chinese').run(); await flush();
+        const message = h.api.ui.toast.mock.calls.at(-1)[0];
+        expect(message).toContain('來源沒有字幕');
+        expect(message).not.toContain('沒有找到匹配的歌曲');
+    });
+    it('explains a timed-out request without leaving a late result active', async () => {
+        vi.useFakeTimers(); const h = harness({ omni: { getLyrics: vi.fn(() => new Promise(() => {})) } });
+        h.start(); await flush(); await vi.advanceTimersByTimeAsync(7001); await flush();
+        h.commands.get('subtitle-status').run();
+        expect(h.api.ui.toast.mock.calls.at(-1)[0]).toContain('單次請求逾時');
+    });
+    it('reports the whole-search deadline and the disabled state accurately', async () => {
+        vi.useFakeTimers(); const h = harness({ omni: { getLyrics: vi.fn(() => new Promise(() => {})) } });
+        const selector = createChineseSelector(h.api, () => h.settings.get(), () => {}, canonicalize, { requestMs: 100000, runMs: 1000 });
+        stops.push(() => selector.dispose()); selector.transform(target(), toFoliumLines(lyrics())); selector.loaded(target(), []); await flush();
+        await vi.advanceTimersByTimeAsync(1001); await flush();
+        expect(selector.showStatus()).toContain('整輪搜尋時間上限');
+        h.settings.set({ autoSelectChinese: false, fallbackOnFailure: false }); selector.settingsChanged();
+        expect(selector.showStatus()).toContain('目前已關閉');
     });
     it('caps requests per minute even if manual retry is repeated', async () => {
         const h = harness(); const selector = createChineseSelector(h.api, () => h.settings.get(), () => {}, canonicalize, { requestsPerMinute: 2 });

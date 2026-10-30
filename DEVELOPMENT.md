@@ -26,7 +26,7 @@ npm run check
 npm test
 ```
 
-`check` 使用 Folia 自己的模組檢查工具。`test` 使用真正的 Folia DTO、重建流程與 ZIP 安裝器；目前為 111 項測試。
+`check` 使用 Folia 自己的模組檢查工具。`test` 使用真正的 Folia DTO、重建流程與 ZIP 安裝器；目前為 128 項測試。
 
 測試啟動器會透過子程序的 `NODE_PATH`，讓外部 Folia checkout 的 CommonJS 安裝器讀到本儲存庫已安裝的 fflate。它只讀取宿主原始碼，不修改宿主 checkout。
 
@@ -36,9 +36,9 @@ npm test
 npm run build
 ```
 
-1.1.0 的輸出為：
+1.1.1 的輸出為：
 
-- `dist/opencc-traditional-lyrics-1.1.0.zip`
+- `dist/opencc-traditional-lyrics-1.1.1.zip`
 - `dist/SHA256SUMS.txt`
 
 打包來源只有 `mods/opencc-traditional-lyrics/`。預覽圖、完整轉換引擎及第三方授權會包含在 ZIP；原始碼倉庫的 `docs/`、測試、腳本和開發依賴不會包含在 ZIP。
@@ -53,7 +53,7 @@ npm run build
 
 1. 分別取 Folia v0.7.22、v0.7.23。
 2. 使用鎖定檔執行 `npm ci`。
-3. 執行模組檢查與 111 項測試。
+3. 執行模組檢查與 128 項測試。
 4. 兩個版本都成功後，建置 ZIP 與 SHA-256 校驗檔，提供為 workflow artifact。
 
 此流程只做檢查、測試和打包；不自動建立 Release、不傳送 issue 留言，也不簽章。完整 GitHub Actions 雲端流程需在檔案上傳後由 GitHub 實際執行確認。

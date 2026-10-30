@@ -7,6 +7,30 @@ const DEFAULTS = Object.freeze({ requestMs: 7000, runMs: 40000, cacheMs: 600000,
     cacheSize: 8, providers: 6, requestsPerMinute: 60 });
 
 const aborted = () => Object.assign(new Error('aborted'), { code: 'aborted' });
+const REASONS = Object.freeze({
+    timeout: '單次請求逾時', deadline: '已達整輪搜尋時間上限', network: '連線失敗或來源未回應',
+    auth: '來源需要登入或登入已過期', restricted: '來源受地區或會員資格限制',
+    'rate-limited': '已達請求上限，請稍後手動重新尋找', unavailable: '來源暫時不可用',
+    empty: '來源沒有字幕', invalid: '字幕格式、時間軸或內容檢查未通過', instrumental: '來源標記為純音樂',
+    'no-match': '沒有找到匹配的歌曲', 'no-provider': '沒有已設定且支援字幕搜尋的來源',
+    'no-chinese': '候選沒有有效中文譯文', 'no-improvement': '沒有可安全套用的更完整中文字幕',
+    complete: '原字幕已有完整且格式正常的中文', unknown: '來源請求失敗',
+});
+
+function errorReason(error) {
+    if (error?.message === 'request-timeout') return 'timeout';
+    if (['not-signed-in', 'session-expired'].includes(error?.code)) return 'auth';
+    if (['region-restricted', 'vip-required'].includes(error?.code)) return 'restricted';
+    if (error?.code === 'rate-limited') return 'rate-limited';
+    if (error?.code === 'network') return 'network';
+    if (['unsupported', 'unavailable', 'stale-ref', 'account-changed'].includes(error?.code)) return 'unavailable';
+    return 'unknown';
+}
+
+function note(entry, reason, failed = true) {
+    if (failed) entry.failures++;
+    entry.reasons[reason] = (entry.reasons[reason] ?? 0) + 1;
+}
 
 export function createChineseSelector(folium, getSettings, refresh, canonicalize, overrides = {}) {
     const limits = { ...DEFAULTS, ...overrides };
@@ -51,7 +75,7 @@ export function createChineseSelector(folium, getSettings, refresh, canonicalize
         let entry = entries.get(key);
         if (!entry) {
             entry = { key, song, base: base ?? [], baseKey: lyricsKey(base ?? []), choice: null,
-                revision: 0, completed: 0, manualOriginal: false, knownComplete: false, forceSearch: false, status: 'idle', failures: 0 };
+                revision: 0, completed: 0, manualOriginal: false, knownComplete: false, forceSearch: false, status: 'idle', failures: 0, reasons: {} };
             entries.set(key, entry);
         }
         entry.song = song; // A fresh ref may replace an expired one for the same portable identity.
@@ -64,6 +88,8 @@ export function createChineseSelector(folium, getSettings, refresh, canonicalize
                 entry.completed = 0;
                 entry.knownComplete = false;
                 entry.status = 'idle';
+                entry.failures = 0;
+                entry.reasons = {};
                 entry.baseKey = nextKey;
             } else if (entry.choice?.changed) {
                 // Preserve new host word segmentation/ruby data when the text and timing are unchanged.
@@ -146,7 +172,11 @@ export function createChineseSelector(folium, getSettings, refresh, canonicalize
         const baseline = analyzeLyrics(entry.base, durationOf(entry.song), canonicalize);
         entry.knownComplete = baseline.usable && baseline.coverage === 1 && baseline.quality >= 0.95;
         if (!wanted(entry)) {
-            if (entry.knownComplete) entry.completed = Date.now();
+            if (entry.knownComplete) {
+                entry.completed = Date.now();
+                entry.reasons = { complete: 1 };
+                entry.failures = 0;
+            }
             return;
         }
         cancel();
@@ -154,10 +184,12 @@ export function createChineseSelector(folium, getSettings, refresh, canonicalize
         active = job;
         entry.status = 'searching';
         entry.failures = 0;
-        const deadline = setTimeout(() => job.controller.abort(), limits.runMs);
+        entry.reasons = {};
+        const deadline = setTimeout(() => { note(entry, 'deadline', false); job.controller.abort(); }, limits.runMs);
         try {
             const providers = folium.omni.listProviders().filter((provider) => provider.configured
                 && provider.supports?.search && provider.supports?.lyrics).slice(0, limits.providers);
+            if (!providers.length) note(entry, 'no-provider', false);
             const query = `${entry.song.title} ${entry.song.artist ?? ''}`.trim().slice(0, 200);
             const perSource = getSettings().searchDepth === 'deep' ? 4 : 2;
             const seen = new Set();
@@ -174,6 +206,7 @@ export function createChineseSelector(folium, getSettings, refresh, canonicalize
                             .filter((song) => song.source === provider.providerId)
                             .map((song) => ({ song, match: matchSong(entry.song, song, job.duration, describeDuration(song), canonicalize) }))
                             .filter((item) => item.match >= 0.9).sort((a, b) => b.match - a.match).slice(0, perSource);
+                        if (!matches.length) note(entry, 'no-match', false);
                         for (const item of matches) {
                             if (!isCurrent(job)) return;
                             const identity = songKey(item.song);
@@ -183,26 +216,32 @@ export function createChineseSelector(folium, getSettings, refresh, canonicalize
                                 const result = await request(job, (signal) => folium.omni.getLyrics(item.song, { signal }));
                                 if (!isCurrent(job)) return;
                                 const metrics = analyzeLyrics(result?.lines, job.duration, canonicalize);
-                                if (result?.isPureMusic || !metrics.usable || metrics.quality < 0.6) { entry.failures++; continue; }
+                                if (result?.isPureMusic) { note(entry, 'instrumental'); continue; }
+                                if (!result?.lines?.length) { note(entry, 'empty'); continue; }
+                                if (!metrics.usable || metrics.quality < 0.6) { note(entry, 'invalid'); continue; }
+                                if (!metrics.coverage) {
+                                    note(entry, 'no-chinese', false);
+                                    if (baseline.usable) continue;
+                                }
                                 job.candidates.push({ lines: result.lines, match: item.match,
                                     source: `${provider.displayName || provider.providerId} · ${item.song.title}` });
                                 updateChoice(job);
                             } catch (error) {
                                 if (!isCurrent(job)) return;
-                                entry.failures++;
+                                note(entry, errorReason(error));
                                 if (['rate-limited', 'not-signed-in', 'session-expired', 'account-changed', 'region-restricted'].includes(error?.code)) break;
                             }
                         }
-                    } catch {
+                    } catch (error) {
                         if (!isCurrent(job)) return;
-                        entry.failures++;
+                        note(entry, errorReason(error));
                     }
                 }
             };
             await Promise.all([worker(), worker()]);
         } catch (error) {
             if (isCurrent(job)) {
-                entry.failures++;
+                note(entry, errorReason(error));
                 folium.log?.warn?.('[OpenCC] 字幕搜尋未完成', error);
             }
         } finally {
@@ -211,10 +250,11 @@ export function createChineseSelector(folium, getSettings, refresh, canonicalize
                 // A deadline keeps any successfully selected subtitles, and never retries in a loop.
                 entry.completed = Date.now();
                 entry.status = entry.choice?.changed ? 'selected' : 'kept-original';
+                if (!entry.choice?.changed && job.candidates.length) note(entry, 'no-improvement', false);
                 active = null;
                 if (!stopped && focus === entry.key) folium.log?.info?.('[OpenCC] 字幕搜尋結束', {
                     status: entry.status, sources: entry.choice?.sources ?? [],
-                    coverage: entry.choice?.metrics.coverage ?? baseline.coverage, failedResults: entry.failures,
+                    coverage: entry.choice?.metrics.coverage ?? baseline.coverage, failedResults: entry.failures, reasons: entry.reasons,
                 });
                 if (announce && !stopped && focus === entry.key) showStatus();
             }
@@ -247,11 +287,14 @@ export function createChineseSelector(folium, getSettings, refresh, canonicalize
         if (!available) message = '此 Folia 版本未提供字幕搜尋介面，請更新 Folia；簡轉繁仍可使用。';
         else if (!entry) message = '目前沒有可搜尋的歌曲。';
         else if (entry.manualOriginal) message = '這首歌已還原原字幕，自動選字幕暫停；可用「重新尋找中文字幕」恢復。';
+        else if (getSettings().autoSelectChinese === false && getSettings().fallbackOnFailure === false) message = '自動尋找與載入失敗備援目前已關閉；簡轉繁仍依設定生效。';
         else if (entry.status === 'searching') message = '正在搜尋中文字幕；失敗的來源會自動跳過。';
         else {
             const metrics = entry.choice?.metrics ?? analyzeLyrics(entry.base, durationOf(entry.song), canonicalize);
             message = `${entry.choice?.changed ? `字幕來源：${[...new Set(entry.choice.sources)].join('、')}` : '保留原字幕'}；中文覆蓋率 ${Math.round(metrics.coverage * 100)}%`;
             if (entry.failures) message += `；已跳過 ${entry.failures} 個失敗或無效結果`;
+            const reasons = Object.entries(entry.reasons).map(([reason, count]) => `${REASONS[reason] ?? REASONS.unknown}${count > 1 ? `（${count} 次）` : ''}`);
+            if (reasons.length) message += `；搜尋情況：${reasons.join('、')}`;
             message += '。品質評分只檢查完整度與格式，不代表語意審核。';
         }
         folium.ui?.toast?.(message, { type: 'info', durationMs: 7000 });
@@ -283,7 +326,10 @@ export function createChineseSelector(folium, getSettings, refresh, canonicalize
             if (next === settingsKey) return;
             settingsKey = next;
             cancel();
-            for (const entry of entries.values()) { entry.completed = 0; entry.choice = null; entry.revision++; }
+            for (const entry of entries.values()) {
+                entry.completed = 0; entry.choice = null; entry.revision++;
+                entry.status = 'idle'; entry.failures = 0; entry.reasons = {};
+            }
             const entry = entries.get(focus);
             if (entry) queue(entry);
         },
