@@ -11,6 +11,6 @@ export default defineConfig({
     resolve: { alias: { '@folia': path.join(host, 'src'), '@': path.join(host, 'src') } },
     test: {
         environment: 'node',
-        include: ['test/unit/mod-system/traditionalLyrics.test.ts'],
+        include: ['test/unit/mod-system/*.test.ts'],
     },
 });
