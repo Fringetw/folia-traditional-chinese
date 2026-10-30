@@ -216,6 +216,9 @@ describe('Folium lifecycle with the real host rebuild and DTO validation', () =>
         const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'folia-opencc-reload-'));
         try {
             fs.copyFileSync(fileURLToPath(new URL('../../../mods/opencc-traditional-lyrics/client.mjs', import.meta.url)), path.join(temp, 'client.mjs'));
+            for (const file of ['selectChinese.mjs', 'lyricQuality.mjs']) {
+                fs.copyFileSync(fileURLToPath(new URL('../../../mods/opencc-traditional-lyrics/' + file, import.meta.url)), path.join(temp, file));
+            }
             // Use native ESM: Vite's test module cache normalizes queries and rewrites import.meta.url.
             const result = spawnSync(process.execPath, ['--input-type=module', '-e', `
                 import fs from 'node:fs';
@@ -223,6 +226,10 @@ describe('Folium lifecycle with the real host rebuild and DTO validation', () =>
                 import assert from 'node:assert/strict';
                 import { pathToFileURL } from 'node:url';
                 const folder = process.argv[1];
+                const selectorSource = fs.readFileSync(path.join(folder, 'selectChinese.mjs'), 'utf8');
+                const qualitySource = fs.readFileSync(path.join(folder, 'lyricQuality.mjs'), 'utf8');
+                globalThis.selectorVersions = [];
+                globalThis.qualityVersions = [];
                 const hooks = new Set();
                 let current;
                 const api = {
@@ -235,12 +242,16 @@ describe('Folium lifecycle with the real host rebuild and DTO validation', () =>
                     lyrics: { refresh: () => { const event = { lines: [{ fullText: 'source' }] }; hooks.forEach(fn => fn(event)); current = event.lines[0].fullText; } },
                 };
                 for (const text of ['first', 'second']) {
+                    fs.writeFileSync(path.join(folder, 'selectChinese.mjs'), selectorSource + "\\nglobalThis.selectorVersions.push('" + text + "');\\n");
+                    fs.writeFileSync(path.join(folder, 'lyricQuality.mjs'), qualitySource + "\\nglobalThis.qualityVersions.push('" + text + "');\\n");
                     fs.writeFileSync(path.join(folder, 'converter.mjs'), "export const getConverter = () => {}; export const transformLines = lines => lines.map(line => ({ ...line, fullText: '" + text + "' }));");
                     const module = await import(pathToFileURL(path.join(folder, 'client.mjs')).href + '?v=' + text);
                     const stop = module.default(api);
                     assert.equal(current, text);
                     stop();
                 }
+                assert.deepEqual(globalThis.selectorVersions, ['first', 'second']);
+                assert.deepEqual(globalThis.qualityVersions, ['first', 'second']);
             `, temp], { encoding: 'utf8' });
             expect(result.stderr).toBe('');
             expect(result.status).toBe(0);
@@ -268,6 +279,8 @@ describe('Folium lifecycle with the real host rebuild and DTO validation', () =>
             expect(contents[prefix + 'vendor/THIRD_PARTY_LICENSES.md']).toBeDefined();
             expect(contents[prefix + 'VALIDATION.md']).toBeUndefined();
             expect(contents[prefix + 'folium.sig.json']).toBeUndefined();
+            expect(contents[prefix + 'selectChinese.mjs']).toBeDefined();
+            expect(contents[prefix + 'lyricQuality.mjs']).toBeDefined();
             const installer = createZipInstall({
                 app: { getPath: () => temp }, isModSystemEnabled: () => true,
                 loadAll: () => [], emitLog: () => {}, serializeError: (error: Error) => error.message,
@@ -278,6 +291,12 @@ describe('Folium lifecycle with the real host rebuild and DTO validation', () =>
             expect(fs.existsSync(path.join(installed, 'vendor/opencc-cn2t-1.4.2.mjs'))).toBe(true);
             const module = await import(/* @vite-ignore */ pathToFileURL(path.join(installed, 'converter.mjs')).href);
             expect(module.transformLines([line('头发')])[0].fullText).toBe('頭髮');
+            const entry = await import(/* @vite-ignore */ pathToFileURL(path.join(installed, 'client.mjs')).href);
+            const h = host();
+            const stop = entry.default(h.api);
+            expect(h.current().lines[0].fullText).toBe('頭髮發現');
+            stop();
+            expect(h.current().lines[0].fullText).toBe('头发发现');
         } finally {
             fs.rmSync(temp, { recursive: true, force: true });
         }
