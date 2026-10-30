@@ -26,7 +26,7 @@ npm run check
 npm test
 ```
 
-`check` 使用 Folia 自己的模組檢查工具。`test` 使用真正的 Folia DTO、重建流程與 ZIP 安裝器；目前為 41 項測試。
+`check` 使用 Folia 自己的模組檢查工具。`test` 使用真正的 Folia DTO、重建流程與 ZIP 安裝器；目前為 111 項測試。
 
 測試啟動器會透過子程序的 `NODE_PATH`，讓外部 Folia checkout 的 CommonJS 安裝器讀到本儲存庫已安裝的 fflate。它只讀取宿主原始碼，不修改宿主 checkout。
 
@@ -36,9 +36,9 @@ npm test
 npm run build
 ```
 
-1.0.1 的輸出為：
+1.1.0 的輸出為：
 
-- `dist/opencc-traditional-lyrics-1.0.1.zip`
+- `dist/opencc-traditional-lyrics-1.1.0.zip`
 - `dist/SHA256SUMS.txt`
 
 打包來源只有 `mods/opencc-traditional-lyrics/`。預覽圖、完整轉換引擎及第三方授權會包含在 ZIP；原始碼倉庫的 `docs/`、測試、腳本和開發依賴不會包含在 ZIP。
@@ -53,7 +53,7 @@ npm run build
 
 1. 分別取 Folia v0.7.22、v0.7.23。
 2. 使用鎖定檔執行 `npm ci`。
-3. 執行模組檢查與 41 項測試。
+3. 執行模組檢查與 111 項測試。
 4. 兩個版本都成功後，建置 ZIP 與 SHA-256 校驗檔，提供為 workflow artifact。
 
 此流程只做檢查、測試和打包；不自動建立 Release、不傳送 issue 留言，也不簽章。完整 GitHub Actions 雲端流程需在檔案上傳後由 GitHub 實際執行確認。
@@ -63,3 +63,12 @@ npm run build
 更新時同步修改根目錄 `package.json` 與模組的 `mod.json` 版本號，再執行上述檢查、測試與建置。Release、原始碼 tag、送審 commit 與 ZIP 應對應同一版本。
 
 市場簽章由 Folium 維護者產生。不要將其他版本的 `folium.sig.json` 複製進新版本。
+
+## 自動選字幕的程式入口
+
+- `client.mjs`：設定、事件與命令註冊，先選字幕再簡轉繁。
+- `selectChinese.mjs`：公開 Omni 查詢、候選迭代、逾時／取消、暫存與請求上限。
+- `lyricQuality.mjs`：歌曲版本核對、中文覆蓋率與格式檢查、保留原時間軸的譯文合併。
+- `test/unit/mod-system/chineseSubtitles.test.ts`：匹配、選擇、備援、生命週期及真實 Omni 邊界的離線回歸測試。
+
+選字幕沒有使用未公開的宿主欄位、平台原始端點、帳號憑證或 AI 語意模型。測試資料不能代表真實平台的網路可用性或翻譯語意品質。執行時載入的三個本地模組都會承接 client 的版本指紋，避免重新載入後沿用舊程式。
