@@ -1,0 +1,160 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> folia-traditional-chinese@1.1.5 test
+> node scripts/test.mjs
+
+
+ RUN  v4.1.11 /workspace/scratch/9886155756ac/folia-traditional-chinese-1.1.6
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts (171 tests | 10 failed) 347ms
+     × searches each recording qualifier once when both aliases carry it 15ms
+     × retains the exact native title form and the Acoustic recording constraint 2ms
+     × recognizes the reported same-recording metadata from 'netease' 3ms
+     × recognizes the reported same-recording metadata from 'kugou' 1ms
+     × recognizes the reported same-recording metadata from 'qq' 3ms
+     × recognizes the reported same-recording metadata from 'spotify' 1ms
+     × compares exact kana pronunciation with the two Latin name tokens in Japanese order 1ms
+     × still probes an unknown artist spelling only for verification against existing lyrics 2ms
+     × reads the formerly rejected NetEase candidate and preserves every original animation word 4ms
+     × can recover an empty original only after the exact reported title and phonetic artist agree 3ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > Folia 0.7.25 actual double-qualified bilingual title > searches each recording qualifier once when both aliases carry it
+AssertionError: expected '青のすみか (acoustic) (acoustic) Tatsuya K…' to be '青のすみか (acoustic) Tatsuya Kitani' // Object.is equality
+
+Expected: "青のすみか (acoustic) Tatsuya Kitani"
+Received: "青のすみか (acoustic) (acoustic) Tatsuya Kitani"
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:238:64
+    236|     const reportedCandidate = (index = 0) => candidate({ ...acousticRe…
+    237|     it('searches each recording qualifier once when both aliases carry…
+    238|         expect(searchQueries(reportedSong(), canonicalize)[0]).toBe('青…
+       |                                                                ^
+    239|     });
+    240|     it('retains the exact native title form and the Acoustic recording…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > Folia 0.7.25 actual double-qualified bilingual title > retains the exact native title form and the Acoustic recording constraint
+AssertionError: expected [ …(3) ] to include '青のすみか (acoustic)'
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:241:64
+    239|     });
+    240|     it('retains the exact native title form and the Acoustic recording…
+    241|         expect(titleForms(reportedSong().title, canonicalize)).toConta…
+       |                                                                ^
+    242|         expect(matchSong(reportedSong(), candidate({ title: '青のすみか', a…
+    243|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > Folia 0.7.25 actual double-qualified bilingual title > recognizes the reported same-recording metadata from 'netease'
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > Folia 0.7.25 actual double-qualified bilingual title > recognizes the reported same-recording metadata from 'kugou'
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > Folia 0.7.25 actual double-qualified bilingual title > recognizes the reported same-recording metadata from 'qq'
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:245:134
+    243|     });
+    244|     it.each(acousticReport.candidates)('recognizes the reported same-r…
+    245|         expect(matchSong(reportedSong(), candidate({ ...metadata, ref:…
+       |                                                                                                                                      ^
+    246|     });
+    247|     it('compares exact kana pronunciation with the two Latin name toke…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > Folia 0.7.25 actual double-qualified bilingual title > recognizes the reported same-recording metadata from 'spotify'
+AssertionError: expected 0.97 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0.97
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:245:134
+    243|     });
+    244|     it.each(acousticReport.candidates)('recognizes the reported same-r…
+    245|         expect(matchSong(reportedSong(), candidate({ ...metadata, ref:…
+       |                                                                                                                                      ^
+    246|     });
+    247|     it('compares exact kana pronunciation with the two Latin name toke…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > Folia 0.7.25 actual double-qualified bilingual title > compares exact kana pronunciation with the two Latin name tokens in Japanese order
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:249:104
+    247|     it('compares exact kana pronunciation with the two Latin name toke…
+    248|         const song = target({ title: '同じ曲', artist: 'Tatsuya Kitani' }…
+    249|         expect(matchSong(song, candidate({ title: '同じ曲', artist: 'キタニタ…
+       |                                                                                                        ^
+    250|         expect(matchSong(song, candidate({ title: '同じ曲', artist: 'タツヤキ…
+    251|         expect(matchSong(song, candidate({ title: '同じ曲', artist: 'キタニタ…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > Folia 0.7.25 actual double-qualified bilingual title > still probes an unknown artist spelling only for verification against existing lyrics
+AssertionError: expected null to match object { translationOnly: true }
+
+- Expected:
+{
+  "translationOnly": true,
+}
+
++ Received:
+null
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:259:86
+    257|     it('still probes an unknown artist spelling only for verification …
+    258|         const unknown = reportedCandidate(); unknown.artist = '未確認の別名';
+    259|         expect(probeSong(reportedSong(), unknown, 204, 203.592, canoni…
+       |                                                                                      ^
+    260|         expect(probeSong(reportedSong(), unknown, 204, 203.592, canoni…
+    261|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > Folia 0.7.25 actual double-qualified bilingual title > reads the formerly rejected NetEase candidate and preserves every original animation word
+AssertionError: expected "vi.fn()" to be called 1 times, but got 0 times
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:269:38
+    267|         } });
+    268|         h.start(); await flush();
+    269|         expect(h.api.omni.getLyrics).toHaveBeenCalledTimes(1);
+       |                                      ^
+    270|         expect(h.shown().lines.every((item: any, i: number) => item.tr…
+    271|         h.shown().lines.forEach((item: any, i: number) => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > Folia 0.7.25 actual double-qualified bilingual title > can recover an empty original only after the exact reported title and phonetic artist agree
+AssertionError: Target cannot be null or undefined.
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:285:34
+    283|         } });
+    284|         h.start(); await flush();
+    285|         expect(h.shown()?.lines).toHaveLength(4);
+       |                                  ^
+    286|         expect(reportFrom(h).selection.strategy).toBe('replaced');
+    287|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  10 failed | 214 passed (224)
+   Start at  13:01:22
+   Duration  2.66s (transform 1.11s, setup 0ms, import 1.87s, tests 2.71s, environment 0ms)
+

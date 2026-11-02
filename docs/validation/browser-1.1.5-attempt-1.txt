@@ -1,0 +1,27 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> folia-traditional-chinese@1.1.5 test:browser
+> node test/browser/run.mjs
+
+PHASE prepare
+PHASE start-vite
+Error: Vite exited: 9mO[0m[38;5;249mv[0m[38;5;249me[0m[38;5;249mr[0m[38;5;249mr[0m[38;5;249mi[0m[38;5;249md[0m[38;5;249me[0m[38;5;249m [0m[38;5;249m}[0m[38;5;249m [0m[38;5;249mf[0m[38;5;249mr[0m[38;5;249mo[0m[38;5;249mm[0m[38;5;249m [0m'./dev/build/buildIdentity.mjs'[38;5;249m;[0m
+ [38;5;240m  │[0m                                                                                                       ───────────────┬───────────────  
+ [38;5;240m  │[0m                                                                                                                      ╰───────────────── Module not found.
+[38;5;246m───╯[0m
+
+    at aggregateBindingErrorsIntoJsError (file:///workspace/scratch/9886155756ac/folia-desktop-recovery/node_modules/rolldown/dist/shared/error-C7pxws0W.mjs:48:18)
+    at unwrapBindingResult (file:///workspace/scratch/9886155756ac/folia-desktop-recovery/node_modules/rolldown/dist/shared/error-C7pxws0W.mjs:18:128)
+    at #build (file:///workspace/scratch/9886155756ac/folia-desktop-recovery/node_modules/rolldown/dist/shared/rolldown-CgWItHdG.mjs:133:34)
+    at async bundleConfigFile (file:///workspace/scratch/9886155756ac/folia-desktop-recovery/node_modules/vite/dist/node/chunks/node.js:37813:12)
+    at async bundleAndLoadConfigFile (file:///workspace/scratch/9886155756ac/folia-desktop-recovery/node_modules/vite/dist/node/chunks/node.js:37709:18)
+    at async loadConfigFromFile (file:///workspace/scratch/9886155756ac/folia-desktop-recovery/node_modules/vite/dist/node/chunks/node.js:37670:42)
+    at async resolveConfig (file:///workspace/scratch/9886155756ac/folia-desktop-recovery/node_modules/vite/dist/node/chunks/node.js:37271:22)
+    at async _createServer (file:///workspace/scratch/9886155756ac/folia-desktop-recovery/node_modules/vite/dist/node/chunks/node.js:24632:65)
+    at async CAC.<anonymous> (file:///workspace/scratch/9886155756ac/folia-desktop-recovery/node_modules/vite/dist/node/cli.js:712:18) {
+  errors: [Getter/Setter]
+}
+
+    at run (file:///workspace/scratch/9886155756ac/folia-traditional-chinese-1.1.5/test/browser/run.mjs:78:45)
+    at async file:///workspace/scratch/9886155756ac/folia-traditional-chinese-1.1.5/test/browser/run.mjs:222:5
+RESULT 0/0; report /workspace/scratch/9886155756ac/folia-traditional-chinese-1.1.5/test-results/browser/report.json

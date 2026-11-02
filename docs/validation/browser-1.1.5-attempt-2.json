@@ -1,0 +1,18 @@
+{
+  "startedAt": "2026-11-01T15:42:27.430Z",
+  "elapsedMs": 6,
+  "phase": "prepare",
+  "baseline": false,
+  "hostVersion": "0.7.22",
+  "modVersion": "1.1.5",
+  "userAgent": null,
+  "fixtureNotice": "Real Folia client API, host events, setter and renderers; synthetic provider replies. No live audio or private accounts.",
+  "networkPolicy": "Loopback only; external browser requests and Node fetch are blocked.",
+  "completed": false,
+  "error": "Error: Stale browser fixtures remain after an interrupted run. Move these to a backup before retrying: openccRecoverye305b21db7.probe.tsx\n    at run (file:///workspace/scratch/9886155756ac/folia-traditional-chinese-1.1.5/test/browser/run.mjs:59:29)\n    at async file:///workspace/scratch/9886155756ac/folia-traditional-chinese-1.1.5/test/browser/run.mjs:222:5",
+  "checks": [],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "requestFailures": [],
+  "blockedRequests": []
+}

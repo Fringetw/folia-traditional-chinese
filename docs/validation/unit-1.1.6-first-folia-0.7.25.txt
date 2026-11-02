@@ -1,0 +1,64 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> folia-traditional-chinese@1.1.5 test
+> node scripts/test.mjs
+
+
+ RUN  v4.1.11 /workspace/scratch/9886155756ac/folia-traditional-chinese-1.1.6
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts (171 tests | 2 failed) 300ms
+     × reads the formerly rejected NetEase candidate and preserves every original animation word 11ms
+     × can read an unknown artist spelling for original-text verification of the acoustic title 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > Folia 0.7.25 actual double-qualified bilingual title > reads the formerly rejected NetEase candidate and preserves every original animation word
+AssertionError: expected [ { text: '青い紙飛行機を折る', …(2) } ] to be [ { text: '青い紙飛行機を折る', …(2) } ] // Object.is equality
+
+If it should pass with deep equality, replace "toBe" with "toStrictEqual"
+
+Expected: [ { text: '青い紙飛行機を折る', …(2) } ]
+Received: serializes to the same string
+
+
+Compared values have no visual difference.
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:272:32
+    270|         expect(h.shown().lines.every((item: any, i: number) => item.tr…
+    271|         h.shown().lines.forEach((item: any, i: number) => {
+    272|             expect(item.words).toBe(original[i].words); expect(item.st…
+       |                                ^
+    273|         });
+    274|         const report = reportFrom(h);
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:271:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > reported acoustic titles and blank animation regressions > can read an unknown artist spelling for original-text verification of the acoustic title
+AssertionError: expected { match: 1, translationOnly: false } to match object { translationOnly: true }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "translationOnly": true,
++   "translationOnly": false,
+  }
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:313:14
+    311|     it('can read an unknown artist spelling for original-text verifica…
+    312|         expect(probeSong(acoustic(), candidate({ title: '青のすみか (Acoust…
+    313|             .toMatchObject({ translationOnly: true });
+       |              ^
+    314|     });
+    315|     it('allows reading another recording only for complete original-te…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  2 failed | 222 passed (224)
+   Start at  13:02:10
+   Duration  2.50s (transform 1.08s, setup 0ms, import 1.92s, tests 2.47s, environment 0ms)
+

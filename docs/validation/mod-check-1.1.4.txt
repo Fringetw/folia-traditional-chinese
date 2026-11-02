@@ -1,0 +1,8 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> folia-traditional-chinese@1.1.4 check
+> node scripts/check.mjs
+
+OpenCC 繁體字幕 (opencc-traditional-lyrics 1.1.4)  /workspace/scratch/9886155756ac/folia-traditional-chinese-1.1.4/mods/opencc-traditional-lyrics
+  note: not signed: the app shows it as "未验证", which is what a mod is until Folium has reviewed and signed it
+  no problem found. This looked at the files only: it did not run the mod.

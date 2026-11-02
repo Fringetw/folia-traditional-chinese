@@ -1,0 +1,248 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> folia-traditional-chinese@1.1.3 test
+> node scripts/test.mjs
+
+
+ RUN  v4.1.11 /workspace/scratch/9886155756ac/folia-traditional-chinese-1.1.4
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts (141 tests | 10 failed) 408ms
+     × searches the native acoustic title before the full bilingual video title 26ms
+     × matches equivalent acoustic labels while preserving that version on every title alias 5ms
+     × can read an unknown artist spelling for original-text verification of the acoustic title 5ms
+     × allows reading another recording only for complete original-text translation proof 1ms
+     × merges a proven full original sequence despite different recording timing, without changing animation 17ms
+     × repairs all-zero-duration words inside a valid line starting at 0 2ms
+     × repairs all-zero-duration words inside a valid line starting at 10 2ms
+     × repairs zero-duration syllables that otherwise hide a valid whole word 1ms
+     × recovers a missing line end from the next known cue and final track duration 1ms
+     × uses current song metadata instead of a previous audio duration during a track switch 10ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > reported acoustic titles and blank animation regressions > searches the native acoustic title before the full bilingual video title
+AssertionError: expected '青のすみか (Acoustic ver.) - Where Our Blu…' to be '青のすみか (acoustic) Tatsuya Kitani' // Object.is equality
+
+Expected: "青のすみか (acoustic) Tatsuya Kitani"
+Received: "青のすみか (Acoustic ver.) - Where Our Blue Is Tatsuya Kitani"
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:92:46
+     90|     const acoustic = () => target({ source: 'ytm', title: '青のすみか (Acou…
+     91|     it('searches the native acoustic title before the full bilingual v…
+     92|         expect(searchQueries(acoustic())[0]).toBe('青のすみか (acoustic) Ta…
+       |                                              ^
+     93|     });
+     94|     it('matches equivalent acoustic labels while preserving that versi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > reported acoustic titles and blank animation regressions > matches equivalent acoustic labels while preserving that version on every title alias
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:95:125
+     93|     });
+     94|     it('matches equivalent acoustic labels while preserving that versi…
+     95|         expect(matchSong(acoustic(), candidate({ title: '青のすみか (Acoust…
+       |                                                                                                                             ^
+     96|         expect(matchSong(acoustic(), candidate({ title: '青のすみか', artis…
+     97|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > reported acoustic titles and blank animation regressions > can read an unknown artist spelling for original-text verification of the acoustic title
+AssertionError: expected null to match object { translationOnly: true }
+
+- Expected:
+{
+  "translationOnly": true,
+}
+
++ Received:
+null
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:100:14
+     98|     it('can read an unknown artist spelling for original-text verifica…
+     99|         expect(probeSong(acoustic(), candidate({ title: '青のすみか (Acoust…
+    100|             .toMatchObject({ translationOnly: true });
+       |              ^
+    101|     });
+    102|     it('allows reading another recording only for complete original-te…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > reported acoustic titles and blank animation regressions > allows reading another recording only for complete original-text translation proof
+AssertionError: expected null to match object { translationOnly: true, …(1) }
+
+- Expected:
+{
+  "originalTextOnly": true,
+  "translationOnly": true,
+}
+
++ Received:
+null
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:104:14
+    102|     it('allows reading another recording only for complete original-te…
+    103|         expect(probeSong(acoustic(), candidate({ title: '青のすみか', artis…
+    104|             .toMatchObject({ translationOnly: true, originalTextOnly: …
+       |              ^
+    105|         expect(probeSong(acoustic(), candidate({ title: '青のすみか', artis…
+    106|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > reported acoustic titles and blank animation regressions > merges a proven full original sequence despite different recording timing, without changing animation
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:114:41
+    112|         const alternate = lyrics(4).map((item, i) => ({ ...item, start…
+    113|         const answer = chooseLyrics(base, [{ ...donor(alternate), tran…
+    114|         expect(answer.metrics.coverage).toBe(1);
+       |                                         ^
+    115|         expect(answer.strategy).toBe('merged');
+    116|         answer.lines.forEach((item: any, i: number) => { expect(item.w…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > reported acoustic titles and blank animation regressions > repairs all-zero-duration words inside a valid line starting at 0
+AssertionError: expected [ { text: '青い紙飛行機を折る', …(2) } ] to deeply equal [ { text: '青い紙飛行機を折る', …(2) } ]
+
+- Expected
++ Received
+
+  [
+    {
+-     "endTime": 4,
++     "endTime": 0,
+      "startTime": 0,
+      "text": "青い紙飛行機を折る",
+    },
+  ]
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:129:52
+    127|         const source = [{ fullText: originals[0], startTime: start, en…
+    128|             words: [{ text: originals[0], startTime: start, endTime: s…
+    129|         expect(repairWordTimings(source)[0].words).toEqual([{ text: or…
+       |                                                    ^
+    130|     });
+    131|     it('repairs zero-duration syllables that otherwise hide a valid wh…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > reported acoustic titles and blank animation regressions > repairs all-zero-duration words inside a valid line starting at 10
+AssertionError: expected [ { text: '青い紙飛行機を折る', …(2) } ] to deeply equal [ { text: '青い紙飛行機を折る', …(2) } ]
+
+- Expected
++ Received
+
+  [
+    {
+-     "endTime": 14,
++     "endTime": 10,
+      "startTime": 10,
+      "text": "青い紙飛行機を折る",
+    },
+  ]
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:129:52
+    127|         const source = [{ fullText: originals[0], startTime: start, en…
+    128|             words: [{ text: originals[0], startTime: start, endTime: s…
+    129|         expect(repairWordTimings(source)[0].words).toEqual([{ text: or…
+       |                                                    ^
+    130|     });
+    131|     it('repairs zero-duration syllables that otherwise hide a valid wh…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > reported acoustic titles and blank animation regressions > repairs zero-duration syllables that otherwise hide a valid whole word
+AssertionError: expected [ { text: '青い紙飛行機を折る', …(3) } ] to deeply equal [ { text: '青い紙飛行機を折る', …(2) } ]
+
+- Expected
++ Received
+
+  [
+    {
+      "endTime": 14,
+      "startTime": 10,
++     "syllables": [
++       {
++         "endTime": 10,
++         "startTime": 10,
++         "text": "青い紙飛行機を折る",
++       },
++     ],
+      "text": "青い紙飛行機を折る",
+    },
+  ]
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:134:52
+    132|         const source = [{ ...line(originals[0]), words: [{ text: origi…
+    133|             syllables: [{ text: originals[0], startTime: 10, endTime: …
+    134|         expect(repairWordTimings(source)[0].words).toEqual([{ text: or…
+       |                                                    ^
+    135|     });
+    136|     it('recovers a missing line end from the next known cue and final …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > reported acoustic titles and blank animation regressions > recovers a missing line end from the next known cue and final track duration
+AssertionError: expected [ 10, NaN ] to deeply equal [ 15, 20 ]
+
+- Expected
++ Received
+
+  [
+-   15,
+-   20,
++   10,
++   NaN,
+  ]
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:139:55
+    137|         const source = [{ ...line(originals[0]), endTime: 10, words: […
+    138|         const next = repairWordTimings(source, 20);
+    139|         expect(next.map((item: any) => item.endTime)).toEqual([15, 20]…
+       |                                                       ^
+    140|         expect(next[0].words[0]).toEqual({ text: originals[0], startTi…
+    141|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯
+
+ FAIL  test/unit/mod-system/chineseSubtitles.test.ts > reported acoustic titles and blank animation regressions > uses current song metadata instead of a previous audio duration during a track switch
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ test/unit/mod-system/chineseSubtitles.test.ts:152:57
+    150|         } });
+    151|         h.start(); await flush();
+    152|         expect(analyzeLyrics(h.shown().lines).coverage).toBe(1);
+       |                                                         ^
+    153|     });
+    154| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/10]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  10 failed | 172 passed (182)
+   Start at  21:41:56
+   Duration  4.63s (transform 1.81s, setup 0ms, import 2.42s, tests 3.62s, environment 0ms)
+

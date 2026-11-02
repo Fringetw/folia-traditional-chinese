@@ -1,0 +1,18 @@
+{
+  "startedAt": "2026-11-01T15:40:57.941Z",
+  "elapsedMs": 53,
+  "phase": "start-vite",
+  "baseline": false,
+  "hostVersion": "0.7.22",
+  "modVersion": "1.1.5",
+  "userAgent": null,
+  "fixtureNotice": "Real Folia client API, host events, setter and renderers; synthetic provider replies. No live audio or private accounts.",
+  "networkPolicy": "Loopback only; external browser requests and Node fetch are blocked.",
+  "completed": false,
+  "error": null,
+  "checks": [],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "requestFailures": [],
+  "blockedRequests": []
+}

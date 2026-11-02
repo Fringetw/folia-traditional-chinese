@@ -1,0 +1,64 @@
+{
+  "hostVersion": "0.7.22",
+  "completed": true,
+  "checks": [
+    {
+      "name": "official installer accepts the delivered 1.1.4 ZIP",
+      "passed": true
+    },
+    {
+      "name": "installed manifest is initially 1.1.4",
+      "passed": true
+    },
+    {
+      "name": "native 1.1.4 activation reports OpenCC v1.1.4",
+      "passed": true
+    },
+    {
+      "name": "official installer upgrades the same mod ID with the delivered 1.1.5 ZIP",
+      "passed": true
+    },
+    {
+      "name": "overwritten manifest is 1.1.5",
+      "passed": true
+    },
+    {
+      "name": "upgrade changes the official content digest and module cache URL",
+      "passed": true
+    },
+    {
+      "name": "every installed file equals the delivered 1.1.5 archive",
+      "passed": true
+    },
+    {
+      "name": "disk replacement alone does not mutate an already activated 1.1.4 module",
+      "passed": true
+    },
+    {
+      "name": "stopping the old activation releases its handlers, settings and commands",
+      "passed": true
+    },
+    {
+      "name": "reloading the new digest reports OpenCC v1.1.5",
+      "passed": true
+    },
+    {
+      "name": "diagnostic report command loads the new diagnostics dependency",
+      "passed": true
+    },
+    {
+      "name": "all three diagnostic commands are registered",
+      "passed": true
+    },
+    {
+      "name": "activation preserves the saved module setting values",
+      "passed": true
+    },
+    {
+      "name": "stopping the new activation leaves no old registrations",
+      "passed": true
+    }
+  ],
+  "error": null,
+  "scope": "Actual saved ZIPs, official installer/digest and native ESM activation. Offline host API fixture; no Electron GUI or live music service."
+}

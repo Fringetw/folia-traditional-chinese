@@ -1,0 +1,65 @@
+{
+  "hostVersion": "0.7.25",
+  "fromVersion": "1.1.5",
+  "toVersion": "1.1.6",
+  "checks": [
+    {
+      "name": "official installer accepts the saved 1.1.5 ZIP",
+      "passed": true
+    },
+    {
+      "name": "installed manifest is 1.1.5",
+      "passed": true
+    },
+    {
+      "name": "native old activation reports v1.1.5",
+      "passed": true
+    },
+    {
+      "name": "actual old installed matcher reproduces the reported rejection",
+      "passed": true
+    },
+    {
+      "name": "official installer upgrades the same mod ID with the current ZIP",
+      "passed": true
+    },
+    {
+      "name": "official content digest and entry URL fingerprint change",
+      "passed": true
+    },
+    {
+      "name": "every installed file equals the tested delivered archive",
+      "passed": true
+    },
+    {
+      "name": "disk replacement does not silently mutate an already active module",
+      "passed": true
+    },
+    {
+      "name": "old activation releases every registration",
+      "passed": true
+    },
+    {
+      "name": "new activation and diagnostic dependency report the current version",
+      "passed": true
+    },
+    {
+      "name": "actual new installed matcher accepts exact reported metadata",
+      "passed": true
+    },
+    {
+      "name": "diagnostic commands remain available",
+      "passed": true
+    },
+    {
+      "name": "saved module settings remain intact",
+      "passed": true
+    },
+    {
+      "name": "new activation releases every registration",
+      "passed": true
+    }
+  ],
+  "completed": true,
+  "scope": "Actual saved ZIPs, official installer/digest and native ESM. Offline host API; no Windows GUI or live music."
+}

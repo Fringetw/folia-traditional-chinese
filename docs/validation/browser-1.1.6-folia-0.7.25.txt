@@ -1,0 +1,69 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> folia-traditional-chinese@1.1.6 test:browser
+> node test/browser/run.mjs
+
+PHASE prepare
+PHASE start-vite
+PHASE launch-chromium
+PHASE load-host-probe
+PHASE matching-and-empty-recovery
+PASS kaiju: Chinese translation selected
+PASS kaiju: original animation text and every word time preserved
+PASS akari: Chinese translation selected
+PASS akari: original animation text and every word time preserved
+PASS cover: Chinese translation selected
+PASS cover: original animation text and every word time preserved
+PASS empty cover: lyrics and word timings recover asynchronously
+PASS Partita: actual Chinese subtitle DOM is present
+PHASE reload-races-and-failures
+PASS host reload and word segmentation rebuild retain translations and timings
+PASS new host word segmentation is retained
+PASS late response after a track switch cannot overwrite the new track
+PASS same title with unrelated original lyrics is rejected without hiding source
+PASS provider failure leaves original text and word animation intact
+PHASE reported-acoustic-and-loading
+PASS acoustic bilingual title and unknown artist spelling find Chinese
+PASS acoustic matching keeps the original recording animation
+PASS album translation transfers only after the full acoustic original sequence is verified
+PASS album translation does not replace acoustic word times
+PASS subtitle preference can hide Chinese without losing translated data or the original
+PASS selecting translation in the style shows Chinese
+PASS an in-progress primary load is not overwritten by refresh
+PASS the completed primary load receives the cached Chinese choice
+PHASE zero-word-and-missing-line-end
+PASS zero-duration words become visible line spans
+PASS zero-duration repair reaches the real main animation
+PASS missing line ends recover from the next cue and actual metadata
+PASS repaired line ends restore an active main lyric
+PHASE missing-word-animation
+PASS missing word data recovers whole-line animation without a working provider
+PASS repaired missing words are visible in the actual main animation
+PHASE renderer-partita
+PASS partita: translated subtitle reaches actual renderer
+PASS Partita: main Japanese word animation is visibly rendered, beyond subtitle data
+PASS partita: rendered frame advances with lyric time
+PHASE renderer-sonnet
+PASS sonnet: translated subtitle reaches actual renderer
+PASS sonnet: rendered frame advances with lyric time
+PHASE renderer-diorama
+PASS diorama: translated subtitle reaches actual renderer
+PASS diorama: rendered frame advances with lyric time
+PHASE restore-and-disable
+PASS restore command immediately restores source lyrics without translation
+PASS manual retry recovers Chinese again
+PASS disabling the module fully restores original lyrics and timings
+PASS no uncaught browser or React error
+PHASE finished
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+[Error: ENOTEMPTY: directory not empty, rmdir '/workspace/scratch/9886155756ac/folia-host-0.7.25/test-results/opencc-browser-openccRecovery313d672859/fonts'] {
+  errno: -39,
+  code: 'ENOTEMPTY',
+  syscall: 'rmdir',
+  path: '/workspace/scratch/9886155756ac/folia-host-0.7.25/test-results/opencc-browser-openccRecovery313d672859/fonts'
+}
+
+Node.js v24.22.1

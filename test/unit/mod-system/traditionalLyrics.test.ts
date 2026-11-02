@@ -216,9 +216,12 @@ describe('Folium lifecycle with the real host rebuild and DTO validation', () =>
         const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'folia-opencc-reload-'));
         try {
             fs.copyFileSync(fileURLToPath(new URL('../../../mods/opencc-traditional-lyrics/client.mjs', import.meta.url)), path.join(temp, 'client.mjs'));
-            for (const file of ['selectChinese.mjs', 'lyricQuality.mjs']) {
+            for (const file of ['selectChinese.mjs', 'lyricQuality.mjs', 'songMatch.mjs', 'diagnostics.mjs', 'diagnosticsUi.mjs']) {
                 fs.copyFileSync(fileURLToPath(new URL('../../../mods/opencc-traditional-lyrics/' + file, import.meta.url)), path.join(temp, file));
             }
+            fs.mkdirSync(path.join(temp, 'vendor'));
+            fs.copyFileSync(fileURLToPath(new URL('../../../mods/opencc-traditional-lyrics/vendor/opencc-jp-characters-1.4.2.mjs', import.meta.url)),
+                path.join(temp, 'vendor/opencc-jp-characters-1.4.2.mjs'));
             // Use native ESM: Vite's test module cache normalizes queries and rewrites import.meta.url.
             const result = spawnSync(process.execPath, ['--input-type=module', '-e', `
                 import fs from 'node:fs';
@@ -228,8 +231,14 @@ describe('Folium lifecycle with the real host rebuild and DTO validation', () =>
                 const folder = process.argv[1];
                 const selectorSource = fs.readFileSync(path.join(folder, 'selectChinese.mjs'), 'utf8');
                 const qualitySource = fs.readFileSync(path.join(folder, 'lyricQuality.mjs'), 'utf8');
+                const matchSource = fs.readFileSync(path.join(folder, 'songMatch.mjs'), 'utf8');
+                const diagnosticsSource = fs.readFileSync(path.join(folder, 'diagnostics.mjs'), 'utf8');
+                const diagnosticsUiSource = fs.readFileSync(path.join(folder, 'diagnosticsUi.mjs'), 'utf8');
                 globalThis.selectorVersions = [];
                 globalThis.qualityVersions = [];
+                globalThis.matchVersions = [];
+                globalThis.diagnosticsVersions = [];
+                globalThis.diagnosticsUiVersions = [];
                 const hooks = new Set();
                 let current;
                 const api = {
@@ -244,6 +253,9 @@ describe('Folium lifecycle with the real host rebuild and DTO validation', () =>
                 for (const text of ['first', 'second']) {
                     fs.writeFileSync(path.join(folder, 'selectChinese.mjs'), selectorSource + "\\nglobalThis.selectorVersions.push('" + text + "');\\n");
                     fs.writeFileSync(path.join(folder, 'lyricQuality.mjs'), qualitySource + "\\nglobalThis.qualityVersions.push('" + text + "');\\n");
+                    fs.writeFileSync(path.join(folder, 'songMatch.mjs'), matchSource + "\\nglobalThis.matchVersions.push('" + text + "');\\n");
+                    fs.writeFileSync(path.join(folder, 'diagnostics.mjs'), diagnosticsSource + "\\nglobalThis.diagnosticsVersions.push('" + text + "');\\n");
+                    fs.writeFileSync(path.join(folder, 'diagnosticsUi.mjs'), diagnosticsUiSource + "\\nglobalThis.diagnosticsUiVersions.push('" + text + "');\\n");
                     fs.writeFileSync(path.join(folder, 'converter.mjs'), "export const getConverter = () => {}; export const transformLines = lines => lines.map(line => ({ ...line, fullText: '" + text + "' }));");
                     const module = await import(pathToFileURL(path.join(folder, 'client.mjs')).href + '?v=' + text);
                     const stop = module.default(api);
@@ -252,6 +264,9 @@ describe('Folium lifecycle with the real host rebuild and DTO validation', () =>
                 }
                 assert.deepEqual(globalThis.selectorVersions, ['first', 'second']);
                 assert.deepEqual(globalThis.qualityVersions, ['first', 'second']);
+                assert.deepEqual(globalThis.matchVersions, ['first', 'second']);
+                assert.deepEqual(globalThis.diagnosticsVersions, ['first', 'second']);
+                assert.deepEqual(globalThis.diagnosticsUiVersions, ['first', 'second']);
             `, temp], { encoding: 'utf8' });
             expect(result.stderr).toBe('');
             expect(result.status).toBe(0);
@@ -281,6 +296,7 @@ describe('Folium lifecycle with the real host rebuild and DTO validation', () =>
             expect(contents[prefix + 'folium.sig.json']).toBeUndefined();
             expect(contents[prefix + 'selectChinese.mjs']).toBeDefined();
             expect(contents[prefix + 'lyricQuality.mjs']).toBeDefined();
+            expect(contents[prefix + 'songMatch.mjs']).toBeDefined();
             const installer = createZipInstall({
                 app: { getPath: () => temp }, isModSystemEnabled: () => true,
                 loadAll: () => [], emitLog: () => {}, serializeError: (error: Error) => error.message,

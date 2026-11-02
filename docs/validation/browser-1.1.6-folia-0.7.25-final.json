@@ -1,0 +1,172 @@
+{
+  "startedAt": "2026-11-02T10:10:40.260Z",
+  "elapsedMs": 58644,
+  "phase": "finished",
+  "baseline": false,
+  "hostVersion": "0.7.25",
+  "modVersion": "1.1.6",
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.0 Safari/537.36",
+  "fixtureNotice": "Real Folia client API, host events, setter and renderers; synthetic provider replies. No live audio or private accounts.",
+  "networkPolicy": "Loopback only; external browser requests and Node fetch are blocked.",
+  "completed": true,
+  "error": null,
+  "checks": [
+    {
+      "name": "kaiju: Chinese translation selected",
+      "passed": true
+    },
+    {
+      "name": "kaiju: original animation text and every word time preserved",
+      "passed": true
+    },
+    {
+      "name": "akari: Chinese translation selected",
+      "passed": true
+    },
+    {
+      "name": "akari: original animation text and every word time preserved",
+      "passed": true
+    },
+    {
+      "name": "cover: Chinese translation selected",
+      "passed": true
+    },
+    {
+      "name": "cover: original animation text and every word time preserved",
+      "passed": true
+    },
+    {
+      "name": "empty cover: lyrics and word timings recover asynchronously",
+      "passed": true
+    },
+    {
+      "name": "Partita: actual Chinese subtitle DOM is present",
+      "passed": true
+    },
+    {
+      "name": "host reload and word segmentation rebuild retain translations and timings",
+      "passed": true
+    },
+    {
+      "name": "new host word segmentation is retained",
+      "passed": true
+    },
+    {
+      "name": "late response after a track switch cannot overwrite the new track",
+      "passed": true
+    },
+    {
+      "name": "same title with unrelated original lyrics is rejected without hiding source",
+      "passed": true
+    },
+    {
+      "name": "provider failure leaves original text and word animation intact",
+      "passed": true
+    },
+    {
+      "name": "acoustic bilingual title and unknown artist spelling find Chinese",
+      "passed": true
+    },
+    {
+      "name": "acoustic matching keeps the original recording animation",
+      "passed": true
+    },
+    {
+      "name": "album translation transfers only after the full acoustic original sequence is verified",
+      "passed": true
+    },
+    {
+      "name": "album translation does not replace acoustic word times",
+      "passed": true
+    },
+    {
+      "name": "subtitle preference can hide Chinese without losing translated data or the original",
+      "passed": true
+    },
+    {
+      "name": "selecting translation in the style shows Chinese",
+      "passed": true
+    },
+    {
+      "name": "an in-progress primary load is not overwritten by refresh",
+      "passed": true
+    },
+    {
+      "name": "the completed primary load receives the cached Chinese choice",
+      "passed": true
+    },
+    {
+      "name": "zero-duration words become visible line spans",
+      "passed": true
+    },
+    {
+      "name": "zero-duration repair reaches the real main animation",
+      "passed": true
+    },
+    {
+      "name": "missing line ends recover from the next cue and actual metadata",
+      "passed": true
+    },
+    {
+      "name": "repaired line ends restore an active main lyric",
+      "passed": true
+    },
+    {
+      "name": "missing word data recovers whole-line animation without a working provider",
+      "passed": true
+    },
+    {
+      "name": "repaired missing words are visible in the actual main animation",
+      "passed": true
+    },
+    {
+      "name": "partita: translated subtitle reaches actual renderer",
+      "passed": true
+    },
+    {
+      "name": "Partita: main Japanese word animation is visibly rendered, beyond subtitle data",
+      "passed": true
+    },
+    {
+      "name": "partita: rendered frame advances with lyric time",
+      "passed": true
+    },
+    {
+      "name": "sonnet: translated subtitle reaches actual renderer",
+      "passed": true
+    },
+    {
+      "name": "sonnet: rendered frame advances with lyric time",
+      "passed": true
+    },
+    {
+      "name": "diorama: translated subtitle reaches actual renderer",
+      "passed": true
+    },
+    {
+      "name": "diorama: rendered frame advances with lyric time",
+      "passed": true
+    },
+    {
+      "name": "restore command immediately restores source lyrics without translation",
+      "passed": true
+    },
+    {
+      "name": "manual retry recovers Chinese again",
+      "passed": true
+    },
+    {
+      "name": "disabling the module fully restores original lyrics and timings",
+      "passed": true
+    },
+    {
+      "name": "no uncaught browser or React error",
+      "passed": true,
+      "details": []
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "requestFailures": [],
+  "blockedRequests": []
+}

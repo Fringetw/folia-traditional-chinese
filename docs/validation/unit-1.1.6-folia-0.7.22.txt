@@ -1,0 +1,14 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> folia-traditional-chinese@1.1.6 test
+> node scripts/test.mjs
+
+
+ RUN  v4.1.11 /workspace/scratch/9886155756ac/folia-traditional-chinese-1.1.6
+
+
+ Test Files  3 passed (3)
+      Tests  224 passed (224)
+   Start at  13:04:13
+   Duration  2.53s (transform 1.23s, setup 0ms, import 1.80s, tests 2.53s, environment 0ms)
+

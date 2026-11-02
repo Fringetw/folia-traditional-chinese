@@ -1,0 +1,10 @@
+{
+  "install": {
+    "file": "/workspace/scratch/9886155756ac/folia-traditional-chinese-1.1.6/dist/opencc-traditional-lyrics-1.1.6.zip",
+    "sha256": "303c6a5f1fac92fa4783dc8c6a6627532cbfd039ee764e0dd65b3938417c5457",
+    "size": 1202203
+  },
+  "installMatchesSource": true,
+  "matchedInstallFiles": 16,
+  "zipIntegrity": "passed"
+}

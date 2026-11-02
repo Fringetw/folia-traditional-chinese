@@ -1,0 +1,30 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+npm notice
+npm notice 📦  @sparticuz/chromium@153.0.0
+npm notice Tarball Contents
+npm notice 1.1kB LICENSE
+npm notice 24.3kB README.md
+npm notice 1.2MB bin/al2023.tar.br
+npm notice 67.0MB bin/chromium.br
+npm notice 183.7kB bin/fonts.tar.br
+npm notice 1.6MB bin/swiftshader.tar.br
+npm notice 1.2kB build/helper.d.ts
+npm notice 4.5kB build/helper.js
+npm notice 1.4kB build/index.d.ts
+npm notice 7.8kB build/index.js
+npm notice 246B build/lambdafs.d.ts
+npm notice 3.2kB build/lambdafs.js
+npm notice 100B build/paths.d.ts
+npm notice 243B build/paths.js
+npm notice 1.9kB package.json
+npm notice Tarball Details
+npm notice name: @sparticuz/chromium
+npm notice version: 153.0.0
+npm notice filename: sparticuz-chromium-153.0.0.tgz
+npm notice package size: 70.0 MB
+npm notice unpacked size: 70.1 MB
+npm notice shasum: f8b987acb42e0b715700adebf051652b9910e6a0
+npm notice integrity: sha512-jiGWqSvPMdu4+[...]yT0vk+dnsgQwA==
+npm notice total files: 15
+npm notice
+sparticuz-chromium-153.0.0.tgz
